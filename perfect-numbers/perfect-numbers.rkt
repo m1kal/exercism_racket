@@ -3,16 +3,20 @@
 (provide perfect-numbers)
 
 (define (perfect-numbers limit)
-  (filter perfect? (range-base1 limit)))
+  (for/list ([number (range-base1 limit)]
+             #:when (perfect? number))
+    number))
 
 (define (perfect? number)
-  (= number (apply + (divisors number))))
+  (= number (divisors number)))
 
 (define (divisors number)
-  (filter (divisor? number) (range-base1 (/ (sub1 number) 2))))
+  (for/sum ([value (range-base1 (/ (sub1 number) 2))]
+            #:when ((divisor? number) value))
+    value))
 
 (define (divisor? number)
   (lambda (val) (zero? (modulo number val))))
 
 (define (range-base1 number)
-  (map add1 (range number)))
+  (in-range 1 (add1 number)))
